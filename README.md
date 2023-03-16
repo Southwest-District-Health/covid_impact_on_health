@@ -37,7 +37,7 @@ Within each group I used two variables to represent that group. For COVID-19 cas
 4. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{AEs} + residual$
 
 ## License
-The project is licensed under the
+The project is licensed under the GPL 3.0 license - see COPYING.txt for details. 
 
 ## Contact
 For questions or comments about the analysis, please contact Austin Gallyer at austin.gallyer@phd3.idaho.gov.
