@@ -566,8 +566,8 @@ ggplot(plot_data, aes(x = cases, y = difference_death)) +
   ylab('Death Rate (per 100,000; differenced)') +
   xlab('COVID-19 Cases')
 
-ggsave('cases_death_scatter.tiff', units = 'in', width = 10, height = 10, 
-       dpi = 800)
+# ggsave('cases_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+#        dpi = 800)
 
 ggplot(plot_data, aes(x = num_vaccines, y = difference_death)) +
   geom_point(color = "#00447c", size = 3) +
@@ -575,9 +575,9 @@ ggplot(plot_data, aes(x = num_vaccines, y = difference_death)) +
   theme(text = element_text(size = 25)) + 
   ylab('Death Rate (per 100,000; differenced)') +
   xlab('mRNA Vaccines Administered')
-
-ggsave('vaccines_death_scatter.tiff', units = 'in', width = 10, height = 10, 
-       dpi = 800)
+# 
+# ggsave('vaccines_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+#        dpi = 800)
 
 ggplot(plot_data, aes(x = total_cli, y = difference_death)) +
   geom_point(color = "#00447c", size = 3) +
@@ -586,8 +586,8 @@ ggplot(plot_data, aes(x = total_cli, y = difference_death)) +
   ylab('Death Rate (per 100,000; differenced)') +
   xlab('Total COVID-like Illness ER Visits')
 
-ggsave('cli_death_scatter.tiff', units = 'in', width = 10, height = 10, 
-       dpi = 800)
+# ggsave('cli_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+#        dpi = 800)
 
 ggplot(plot_data, aes(x = total_aes, y = difference_death)) +
   geom_point(color = "#00447c", size = 3) +
@@ -596,8 +596,8 @@ ggplot(plot_data, aes(x = total_aes, y = difference_death)) +
   ylab('Death Rate (per 100,000; differenced)') +
   xlab('Total Vaccine Adverse Events Reported')
 
-ggsave('aes_death_scatter.tiff', units = 'in', width = 10, height = 10, 
-       dpi = 800)
+# ggsave('aes_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+#        dpi = 800)
 
 # Suicide Trend -----------------------------------------------------------
 # Should really be age-adjusted.
@@ -608,8 +608,6 @@ suicide_ts <- county_pop %>%
   full_join(suicide_clean) %>%
   mutate("suicide_rate" = (total_suis / total_pop) * 100000) %>%
   as_tsibble(index = year)
-
-
 
 quickplot(x = year, y = suicide_rate, geom = "line", data = suicide_ts)
 
@@ -628,7 +626,6 @@ fc_suicide <- forecast(linear_model, new_data = post_pandemic_suicide)
 fc_suicide %>%
   autoplot(pre_pandemic_suicide) +
   autolayer(post_pandemic_suicide)
-
 
 ## Plot suicide
 
@@ -653,5 +650,5 @@ suicide_ts %>%
   xlab("Date (by year)") +
   theme(text = element_text(size = 25))
 
-ggsave('suicide_forecast.tiff', units = 'in', width = 16, height = 8, 
-       dpi = 800)
+# ggsave('suicide_forecast.tiff', units = 'in', width = 16, height = 8, 
+#        dpi = 800)
