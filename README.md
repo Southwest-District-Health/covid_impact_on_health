@@ -24,26 +24,26 @@ This model was used to forecast the expected deaths between 2020 Mar. and 2021 D
 
 This created an average estimate of the excess deaths during this time period, along with 95% confidence intervals.
 
-After establishing that PHD3 experienced excess deaths from 2020 Mar. to 2021 Dec., the next step was to examine correlates of the death rate. Based on the concerns of our Board, constituents, and experts at our organization, I examined two groups of correlates: 
+After establishing that PHD3 experienced excess deaths from 2020 Mar. to 2021 Dec., the next step was to examine correlates of the death rate. Based on the concerns of our Board, constituents, and experts at our organization, I examined two groups of correlates:
 
-1. COVID-19 Cases
-2. COVID-19 Vaccines
+1.  COVID-19 Cases
+2.  COVID-19 Vaccines
 
 Within each group I used two variables to represent that group. For COVID-19 cases, they were: the number of COVID-19 cases that month, and the number of COVID-like illness ER visits that month. For COVID-19 vaccines, I examined: the number of COVID-19 mRNA vaccines administered that month, and the number of adverse event reports associated with a COVID-19 vaccine. By selecting one variable from each group for each model, this results in four different models:
 
-1. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{cases} + \beta_4 x_{vaccines} + residual$
-2. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{cases} + \beta_4 x_{AEs} + residual$
-3. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{vaccines} + residual$
-4. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{AEs} + residual$
+1.  $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{cases} + \beta_4 x_{vaccines} + residual$
+2.  $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{cases} + \beta_4 x_{AEs} + residual$
+3.  $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{vaccines} + residual$
+4.  $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{AEs} + residual$
 
 Note that $\beta_2 x_{month}$ actually represents a set of dummy-coded variables representing the months of the year. Thus, the full equation for model 1 would be:
 
-$y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{feb} + \beta_3 x_{mar} + \beta_4 x_{apr} + \beta_5 x_{may} + \beta_6 x_{jun} + \beta_7 x_{jul} + \beta_8 x_{aug} + \beta_9 x_{sep} + \beta_10 x_{oct} + \beta_11 x_{nov} + \beta_12 x_{dec} +\beta_13 x_{cases} + \beta_14 x_{vaccines} + residual$
+$y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{feb} + \beta_3 x_{mar} + \beta_4 x_{apr} + \beta_5 x_{may} + \beta_6 x_{jun} + \beta_7 x_{jul} + \\ \beta_8 x_{aug} + \beta_9 x_{sep} + \beta_{10} x_{oct} + \beta_{11} x_{nov} + \beta_{12} x_{dec} +\beta_{13} x_{cases} + \beta_{14} x_{vaccines} + residual$
 
 ## License
-The project is licensed under the GPL 3.0 license - see COPYING.txt for details. 
+
+The project is licensed under the GPL 3.0 license - see COPYING.txt for details.
 
 ## Contact
-For questions or comments about the analysis, please contact Austin Gallyer at austin.gallyer@phd3.idaho.gov.
 
-
+For questions or comments about the analysis, please contact Austin Gallyer at [austin.gallyer\@phd3.idaho.gov](mailto:austin.gallyer@phd3.idaho.gov){.email}.
