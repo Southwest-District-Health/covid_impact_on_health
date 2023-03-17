@@ -36,6 +36,10 @@ Within each group I used two variables to represent that group. For COVID-19 cas
 3. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{vaccines} + residual$
 4. $y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{month} + \beta_3 x_{CLI} + \beta_4 x_{AEs} + residual$
 
+Note that $\beta_2 x_{month}$ actually represents a set of dummy-coded variables representing the months of the year. Thus, the full equation for model 1 would be:
+
+$y_{deathrate} = \beta_{0} + \beta_{1} x_{time} + \beta_2 x_{feb} + \beta_3 x_{mar} + \beta_4 x_{apr} + \beta_5 x_{may} + \beta_6 x_{jun} + \beta_7 x_{jul} + \beta_8 x_{aug} + \beta_9 x_{sep} + \beta_10 x_{oct} + \beta_11 x_{nov} + \beta_12 x_{dec} +\beta_13 x_{cases} + \beta_14 x_{vaccines} + residual$
+
 ## License
 The project is licensed under the GPL 3.0 license - see COPYING.txt for details. 
 
