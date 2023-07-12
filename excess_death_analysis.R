@@ -484,7 +484,8 @@ analysis_data <- clean_data %>%
   as_tsibble(index = year_month) %>%
   select(death_rate, cases, num_vaccines, pandemic, year_month, month) %>%
   full_join(cli_clean) %>%
-  full_join(vaers_clean)
+  full_join(vaers_clean) %>% 
+  mutate('future_death_rate' = lead(death_rate, n = 5))
 
 analysis_data[is.na(analysis_data)] <- 0
 
@@ -507,10 +508,14 @@ analysis_data %>%
   autoplot()
 
 analysis_data <- analysis_data %>%
-  mutate("difference_death" = difference(death_rate)) 
+  mutate("difference_death" = difference(death_rate), 
+         'difference_future_death' = difference(future_death_rate)) 
 
 plot_data <- analysis_data %>% 
   filter(year_month >= yearmonth('2020-03-01'))
+
+future_analysis_data <- analysis_data %>% 
+  filter(year_month <= max(year_month) - 4)
 
 # Analyze the data
 ## Model 1: number of cases and number of mrna vaccines
@@ -523,6 +528,15 @@ cases_vaccines <- lm(
 )
 
 summary(cases_vaccines)
+
+cases_vaccines_future <- lm(
+  difference_future_death ~ year_month + 
+    factor(month) + 
+    num_vaccines, 
+  data = future_analysis_data
+)
+
+summary(cases_vaccines_future)
 
 ## Model 2: CLI and number of mrna vaccines
 cli_vaccines <- lm(
@@ -564,9 +578,10 @@ ggplot(plot_data, aes(x = cases, y = difference_death)) +
   theme_classic() + 
   theme(text = element_text(size = 25)) + 
   ylab('Death Rate (per 100,000; differenced)') +
-  xlab('COVID-19 Cases')
+  xlab('COVID-19 Cases') + 
+  geom_smooth(method = 'lm', se = FALSE, color = "#00447c")
 
-# ggsave('cases_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+# ggsave('cases_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
 
 ggplot(plot_data, aes(x = num_vaccines, y = difference_death)) +
@@ -574,9 +589,10 @@ ggplot(plot_data, aes(x = num_vaccines, y = difference_death)) +
   theme_classic() + 
   theme(text = element_text(size = 25)) + 
   ylab('Death Rate (per 100,000; differenced)') +
-  xlab('mRNA Vaccines Administered')
-# 
-# ggsave('vaccines_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+  xlab('mRNA Vaccines Administered') + 
+  geom_smooth(method = 'lm', se = FALSE, color = "#00447c")
+
+# ggsave('vaccines_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
 
 ggplot(plot_data, aes(x = total_cli, y = difference_death)) +
@@ -594,10 +610,39 @@ ggplot(plot_data, aes(x = total_aes, y = difference_death)) +
   theme_classic() + 
   theme(text = element_text(size = 25)) + 
   ylab('Death Rate (per 100,000; differenced)') +
-  xlab('Total Vaccine Adverse Events Reported')
+  xlab('Total Vaccine Adverse Events Reported') + 
+  geom_smooth(method = 'lm', se = FALSE, color = "#00447c")
 
-# ggsave('aes_death_scatter.tiff', units = 'in', width = 10, height = 10, 
+# ggsave('aes_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
+
+
+# Future analysis ---------------------------------------------------------
+time_lead <- 1
+
+future_analysis_data <- clean_data %>%
+  full_join(corr_data) %>%
+  mutate(
+    year_month = yearmonth(date)
+  ) %>%
+  as_tsibble(index = year_month) %>%
+  select(death_rate, cases, num_vaccines, pandemic, year_month, month) %>%
+  full_join(cli_clean) %>%
+  full_join(vaers_clean) %>% 
+  mutate('future_death_rate' = lead(death_rate, n = time_lead), 
+         'difference_future_death' = difference(future_death_rate)) %>% 
+  filter(year_month <= max(year_month) - time_lead & year_month > min(year_month) & num_vaccines > 0)
+
+future_analysis_data[is.na(future_analysis_data)] <- 0
+
+vaccines_future <- lm(
+  difference_future_death ~ year_month + 
+    num_vaccines, 
+  data = future_analysis_data
+)
+
+summary(vaccines_future)
+
 
 # Suicide Trend -----------------------------------------------------------
 # Should really be age-adjusted.
