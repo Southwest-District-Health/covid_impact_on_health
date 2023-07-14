@@ -178,6 +178,22 @@ clean_data <- death_data %>%
     "death_rate" = (total_deaths / total_population) * 100000
   )
 
+# Create static version of animated plot below
+
+clean_data %>%
+  filter(date <= date("2020-02-01")) %>%
+  ggplot(aes(x = date, y = death_rate)) +
+  geom_line(color = "#00447c", linewidth = 1) +
+  ylim(0, 150) +
+  xlim(date("2000-01-01"), date("2021-12-01")) +
+  theme_classic() +
+  ylab("Death Rate (per 100,000 people)") +
+  xlab("Date (by month)") +
+  theme(text = element_text(size = 25))
+
+ggsave('death_static.tiff', units = 'in', width = 16, height = 8, 
+       dpi = 800)
+
 # Create animated plot of death rate through 2020 Feb.
 
 # death_animated <- clean_data %>%
@@ -482,7 +498,7 @@ analysis_data <- clean_data %>%
     year_month = yearmonth(date)
   ) %>%
   as_tsibble(index = year_month) %>%
-  select(death_rate, cases, num_vaccines, pandemic, year_month, month) %>%
+  select(death_rate, cases, num_vaccines, pandemic, year_month, month, total_deaths) %>%
   full_join(cli_clean) %>%
   full_join(vaers_clean) %>% 
   mutate('future_death_rate' = lead(death_rate, n = 5))
@@ -584,6 +600,17 @@ ggplot(plot_data, aes(x = cases, y = difference_death)) +
 # ggsave('cases_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
 
+ggplot(plot_data, aes(x = cases, y = death_rate)) +
+  geom_point(color = "#00447c", size = 3) +
+  theme_classic() + 
+  theme(text = element_text(size = 25)) + 
+  ylab('Death Rate (per 100,000)') +
+  xlab('COVID-19 Cases') + 
+  geom_smooth(method = 'lm', se = FALSE, color = "#00447c")
+
+ggsave('cases_deathrate_scatter.tiff', units = 'in', width = 10, height = 10, 
+       dpi = 800)
+
 ggplot(plot_data, aes(x = num_vaccines, y = difference_death)) +
   geom_point(color = "#00447c", size = 3) +
   theme_classic() + 
@@ -594,6 +621,20 @@ ggplot(plot_data, aes(x = num_vaccines, y = difference_death)) +
 
 # ggsave('vaccines_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
+
+vaccine_available_data <- plot_data %>% 
+  filter(num_vaccines != 0)
+
+ggplot(vaccine_available_data, aes(x = num_vaccines, y = death_rate)) +
+  geom_point(color = "#00447c", size = 3) +
+  theme_classic() + 
+  theme(text = element_text(size = 25)) + 
+  ylab('Death Rate (per 100,000)') +
+  xlab('mRNA Vaccines Administered') + 
+  geom_smooth(method = 'lm', se = FALSE, color = "#00447c")
+
+ggsave('vaccines_deathrate_scatter.tiff', units = 'in', width = 10, height = 10, 
+       dpi = 800)
 
 ggplot(plot_data, aes(x = total_cli, y = difference_death)) +
   geom_point(color = "#00447c", size = 3) +
@@ -616,6 +657,17 @@ ggplot(plot_data, aes(x = total_aes, y = difference_death)) +
 # ggsave('aes_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
 
+
+ggplot(vaccine_available_data, aes(x = total_aes, y = death_rate)) +
+  geom_point(color = "#00447c", size = 3) +
+  theme_classic() + 
+  theme(text = element_text(size = 25)) + 
+  ylab('Death Rate (per 100,000)') +
+  xlab('Total Vaccine Adverse Events Reported') + 
+  geom_smooth(method = 'lm', se = FALSE, color = "#00447c")
+
+ggsave('aes_deathrate_scatter.tiff', units = 'in', width = 10, height = 10, 
+       dpi = 800)
 
 # Future analysis ---------------------------------------------------------
 time_lead <- 1
