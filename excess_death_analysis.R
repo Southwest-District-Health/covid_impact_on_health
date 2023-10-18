@@ -44,7 +44,6 @@ county_pop_2021 <- get_data_path(
 ) %>%
   read_excel(range = "A4:D49")
 
-
 # Import COVID case data
 covid_cases <- get_data_path(
   data_type = "processed",
@@ -74,12 +73,6 @@ vaers_data <- get_data_path(
   data_name = "vaers_2020to2021.csv"
 ) %>%
   read_csv()
-
-suicide_data <- get_data_path(
-  data_type = "raw",
-  data_name = "District 3 Resident Deaths by Year and Month 2000-2021.xlsx"
-) %>%
-  read_excel(sheet = "county year cause", range = "A3:O141")
 
 # Clean Data --------------------------------------------------------------
 
@@ -276,8 +269,6 @@ cis <- fc_death %>%
   ) %>%
   select("mean" = .mean, lower, upper, month)
 
-
-
 post_pandemic_data <- clean_data %>%
   filter(date > "2020-02-01") %>%
   mutate(
@@ -459,6 +450,7 @@ fc_death %>%
 # )
 # 
 # anim_save("actual_forecast.gif")
+
 # Time-series correlations ------------------------------------------------
 # Get data in right format
 corr_data <- covid_cases %>%
@@ -587,7 +579,6 @@ cli_vaers <- lm(
 
 summary(cli_vaers)
 
-
 ### Create scatter plots of only post march 2020 relationships
 ggplot(plot_data, aes(x = cases, y = difference_death)) +
   geom_point(color = "#00447c", size = 3) +
@@ -657,7 +648,6 @@ ggplot(plot_data, aes(x = total_aes, y = difference_death)) +
 # ggsave('aes_death_scatter.tiff', units = 'in', width = 10, height = 10,
 #        dpi = 800)
 
-
 ggplot(vaccine_available_data, aes(x = total_aes, y = death_rate)) +
   geom_point(color = "#00447c", size = 3) +
   theme_classic() + 
@@ -694,58 +684,3 @@ vaccines_future <- lm(
 )
 
 summary(vaccines_future)
-
-
-# Suicide Trend -----------------------------------------------------------
-# Should really be age-adjusted.
-
-suicide_ts <- county_pop %>%
-  group_by(year) %>%
-  summarize("total_pop" = sum(population)) %>%
-  full_join(suicide_clean) %>%
-  mutate("suicide_rate" = (total_suis / total_pop) * 100000) %>%
-  as_tsibble(index = year)
-
-quickplot(x = year, y = suicide_rate, geom = "line", data = suicide_ts)
-
-pre_pandemic_suicide <- suicide_ts %>%
-  filter(year <= 2019)
-
-post_pandemic_suicide <- suicide_ts %>%
-  filter(year >= 2020) %>%
-  select(year, suicide_rate)
-
-linear_model <- pre_pandemic_suicide %>%
-  model(TSLM(suicide_rate ~ trend()))
-
-fc_suicide <- forecast(linear_model, new_data = post_pandemic_suicide)
-
-fc_suicide %>%
-  autoplot(pre_pandemic_suicide) +
-  autolayer(post_pandemic_suicide)
-
-## Plot suicide
-
-cis <- fc_suicide %>%
-  hilo(level = 95) %>%
-  mutate(
-    "lower" = `95%`$lower,
-    "upper" = `95%`$upper
-  ) %>%
-  select("suicide_rate" = .mean, lower, upper, year)
-
-suicide_ts %>%
-  ggplot(aes(x = year, y = suicide_rate)) +
-  geom_line(color = "#00447c", linewidth = 1) +
-  geom_line(color = '#fdd404', data = cis, aes(x = year, y = suicide_rate), 
-            linewidth = 1) +
-  geom_ribbon(fill = '#fdd404', data = cis, 
-              aes(x = year, ymin = lower, ymax = upper), alpha = 0.2) +
-  ylim(0, 35) +
-  theme_classic() +
-  ylab("Suicide Rate (per 100,000 people)") +
-  xlab("Date (by year)") +
-  theme(text = element_text(size = 25))
-
-# ggsave('suicide_forecast.tiff', units = 'in', width = 16, height = 8, 
-#        dpi = 800)
